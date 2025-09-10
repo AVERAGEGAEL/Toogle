@@ -1,0 +1,39 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#browser-bar {
+    display: flex;
+    padding: 5px;
+    background: #2c2c2c;
+    color: white;
+    align-items: center;
+}
+
+#address-bar {
+    flex: 1;
+    padding: 5px;
+    font-size: 16px;
+}
+
+#go-btn, #fullscreen-btn {
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#iframe-container {
+    flex: 1;
+    position: relative;
+}
+
+#iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
