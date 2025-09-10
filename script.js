@@ -4,23 +4,26 @@ const iframe = document.getElementById('browser-iframe');
 const homepage = document.getElementById('homepage');
 const fullscreenBtn = document.getElementById('fullscreen-btn');
 
+const UV_BACKEND = 'https://uv.uraverageopdoge.workers.dev/fetch?url=';
+
 function loadURL() {
     let input = addressBar.value.trim();
-
     if (!input) return;
 
-    // Determine if input is a full URL
     let url;
     if (input.startsWith('http://') || input.startsWith('https://')) {
         url = input;
     } else {
-        // Default search using DuckDuckGo
-        url = `https://duckduckgo.com/?q=${encodeURIComponent(input)}`;
+        // If it’s a search term, send to Google search URL
+        url = `https://www.google.com/search?q=${encodeURIComponent(input)}`;
     }
+
+    // Encode URL for UV backend
+    const uvURL = UV_BACKEND + encodeURIComponent(url);
 
     homepage.style.display = 'none';
     iframe.style.display = 'block';
-    iframe.src = url;
+    iframe.src = uvURL;
 }
 
 // Button click
