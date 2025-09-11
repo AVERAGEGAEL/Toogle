@@ -5,17 +5,34 @@ const fullscreenBtn = document.getElementById("fullscreen-btn");
 const homepage = document.getElementById("homepage");
 const results = document.getElementById("results");
 
+// Create viewer container + iframe (hidden by default)
+const viewerContainer = document.createElement("div");
+viewerContainer.id = "viewer-container";
+viewerContainer.style.display = "none";
+viewerContainer.style.flex = "1";
+viewerContainer.style.borderTop = "1px solid #dadce0";
+
+const viewer = document.createElement("iframe");
+viewer.id = "viewer";
+viewer.style.width = "100%";
+viewer.style.height = "100%";
+viewer.style.border = "none";
+
+viewerContainer.appendChild(viewer);
+document.body.insertBefore(viewerContainer, document.querySelector("footer"));
+
 // Search function
 async function doSearch(query) {
   if (!query.trim()) return;
 
-  // Hide homepage and show results
+  // Hide homepage, show results
   homepage.style.display = "none";
+  viewerContainer.style.display = "none";
   results.style.display = "block";
   results.innerHTML = "<p>Searching...</p>";
 
   try {
-    // Use DuckDuckGo's Instant Answer API (no key required)
+    // DuckDuckGo Instant Answer API
     const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json`);
     const data = await res.json();
 
@@ -26,7 +43,7 @@ async function doSearch(query) {
         if (item.Text && item.FirstURL) {
           html += `
             <div class="result">
-              <a href="${item.FirstURL}" target="_blank">${item.Text}</a>
+              <a href="#" data-url="${item.FirstURL}">${item.Text}</a>
             </div>`;
         }
       });
@@ -35,13 +52,39 @@ async function doSearch(query) {
     }
 
     results.innerHTML = html;
+
+    // Handle clicks on results
+    document.querySelectorAll(".result a").forEach(link => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        openInViewer(link.getAttribute("data-url"));
+      });
+    });
+
   } catch (err) {
     results.innerHTML = `<p>Error fetching results. Try again later.</p>`;
     console.error(err);
   }
 }
 
-// Handle Enter key in search box
+// Open site inside Toogle viewer
+function openInViewer(url) {
+  results.style.display = "none";
+  viewerContainer.style.display = "flex";
+  viewer.src = url;
+
+  // Detect iframe CSP issues
+  viewer.onerror = () => {
+    viewerContainer.innerHTML = `
+      <div style="padding:20px; color:#d93025;">
+        <h2>⚠️ Site blocked from embedding</h2>
+        <p>This website doesn’t allow being opened inside Toogle.<br>
+        Try another site or wait until UV mode is added.</p>
+      </div>`;
+  };
+}
+
+// Handle Enter key
 searchBox.addEventListener("keypress", (e) => {
   if (e.key === "Enter") {
     doSearch(searchBox.value);
@@ -53,7 +96,7 @@ goBtn.addEventListener("click", () => {
   doSearch(searchBox.value);
 });
 
-// Handle fullscreen button
+// Fullscreen toggle
 fullscreenBtn.addEventListener("click", () => {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch(err => {
