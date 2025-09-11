@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Header (acts like browser top bar) -->
+  <!-- Header -->
   <header>
     <span>🔎 Toogle</span>
     <input type="text" id="search-box" placeholder="Search the web...">
@@ -24,8 +24,13 @@
   <!-- Results -->
   <div id="results"></div>
 
+  <!-- Browser Viewer -->
+  <div id="viewer-container" style="display:none;">
+    <iframe id="viewer" src=""></iframe>
+  </div>
+
   <footer>
-    Toogle v1.0
+    Toogle v1.1
   </footer>
 
   <script src="script.js"></script>
